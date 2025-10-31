@@ -1,0 +1,33 @@
+# Restoring Division Algorithm (Unsigned Binary Division)
+
+M = int(input("Enter the Divisor (M) = "))
+Q = int(input("Enter the Dividend (Q) = "))
+
+# Use bit length of larger value
+n = max(abs(M), abs(Q)).bit_length()
+A = 0  # Accumulator
+
+print(f"Binary representation of Dividend (Q) = {format(Q, f'0{n}b')}")
+print(f"Binary representation of Divisor (M) = {format(M, f'0{n}b')}")
+
+for _ in range(n):
+    # Left shift (A, Q)
+    A = (A << 1) | ((Q >> (n - 1)) & 1)
+    Q = (Q << 1) & ((1 << n) - 1)
+
+    # Subtract divisor
+    A = A - M
+
+    # Check result
+    if A < 0:
+        Q = Q & (~1)  # Set last bit to 0
+        A = A + M     # Restore A
+    else:
+        Q = Q | 1     # Set last bit to 1
+
+# Mask to n bits for binary display
+A = A & ((1 << n) - 1)
+Q = Q & ((1 << n) - 1)
+
+print(f"Quotient in binary = {format(Q, f'0{n}b')}")
+print(f"Remainder in binary = {format(A, f'0{n}b')}")
