@@ -1,0 +1,49 @@
+def get_bin(num, bits):
+    """Return binary string representation with two's complement for negatives."""
+    if num >= 0:
+        return format(num, '0{}b'.format(bits))
+    else:
+        return format((1 << bits) + num, '0{}b'.format(bits))
+
+
+# --- Input ---
+M = int(input("Enter the Multiplier (M) = "))
+Q = int(input("Enter the Multiplicand (Q) = "))
+
+# --- Setup ---
+n = max(M.bit_length(), Q.bit_length()) + 1
+M_bin = get_bin(M, n)
+Q_bin = get_bin(Q, n)
+
+acc = 0
+Q_1 = 0
+P = Q
+
+# --- Booth's Algorithm ---
+for _ in range(n):
+    Q0 = P & 1
+    if Q0 == 1 and Q_1 == 0:
+        acc -= M
+    elif Q0 == 0 and Q_1 == 1:
+        acc += M
+
+    # Combine acc and P
+    combined = (acc << n) | (P & ((1 << n) - 1))
+    
+    # Arithmetic right shift
+    sign_bit = (combined >> (2 * n - 1)) & 1
+    combined = (combined >> 1) | (sign_bit << (2 * n - 1))
+    
+    # Update acc, P, Q_1
+    acc = (combined >> n)
+    if acc >= (1 << (n - 1)):  # handle sign bit
+        acc -= (1 << n)
+    P = combined & ((1 << n) - 1)
+    Q_1 = Q0
+
+# --- Output ---
+product_bin = get_bin((acc << n) | P, 2 * n)
+
+print(f"Binary representation of Multiplier (M)     = {M_bin}")
+print(f"Binary representation of Multiplicand (Q)  = {Q_bin}")
+print(f"Result of multiplication in binary         = {product_bin}")

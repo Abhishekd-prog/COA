@@ -1,0 +1,84 @@
+def float_to_ieee754():
+    s = input("Enter the Decimal Number = ").strip()
+    
+    # Handle negative input
+    if s[0] == '-':
+        sign_bit = '1'
+        s = s[1:]
+    else:
+        sign_bit = '0'
+    
+    # Convert string to float
+    value = float(s)
+    
+    # Get integer and fractional parts
+    int_part = int(value)
+    frac_part = value - int_part
+    
+    # Convert the integer part to binary
+    int_bin_digits = []
+    n = int_part
+    if n == 0:
+        int_bin = "0"
+    else:
+        while n > 0:
+            int_bin_digits.append(str(n % 2))
+            n //= 2
+        int_bin = ''.join(reversed(int_bin_digits))
+    
+    # Convert the fractional part to binary
+    frac_bits = []
+    f = frac_part
+    for _ in range(60):  # Limit to 60 iterations for precision
+        f *= 2
+        if f >= 1.0:
+            frac_bits.append('1')
+            f -= 1.0
+        else:
+            frac_bits.append('0')
+        if f == 0.0:
+            break
+    frac_bin = ''.join(frac_bits) if frac_bits else '0'
+    
+    # Combined binary representation (integer + fraction)
+    combined = int_bin + '.' + frac_bin
+    print("Given number in Binary = " + combined)
+    
+    # Determine scientific notation and shift
+    if int_part != 0:
+        shift = len(int_bin) - 1
+        mantissa_frac = int_bin[1:] + frac_bin
+    else:
+        first_one = frac_bin.find('1')
+        shift = -(first_one + 1)
+        mantissa_frac = frac_bin[first_one + 1:]
+    
+    # Scientific notation
+    scientific = "1." + (mantissa_frac if mantissa_frac else "0") + " * 2^" + str(shift)
+    print("Given number in Scientific Notation = " + scientific)
+    
+    print("Real Exponent = " + str(shift))
+    
+    # IEEE 754 32-bit format: 1 sign bit, 8 exponent bits, 23 mantissa bits
+    print("Select the destination floating point format = 32 bit")
+    
+    # Biased exponent (127 is the bias for 32-bit)
+    biased = shift + 127
+    biased_bin = format(biased, '08b')
+    print(f"Biased Exponent = {shift} + 127 = {biased} = {biased_bin}")
+    
+    # Actual mantissa fraction (23 bits)
+    mantissa = (mantissa_frac + '0' * 30)[:23]
+    print(f"Actual fractional part = {mantissa_frac}")
+    print("Mantissa of 23 bits = " + mantissa)
+    
+    # IEEE 754 32-bit representation
+    ieee32 = sign_bit + biased_bin + mantissa
+    print("32 bit representation of the given number = " + ieee32)
+    
+    # Hexadecimal representation
+    hex_repr = format(int(ieee32, 2), '08X')
+    print("Hex representation = " + hex_repr)
+
+if __name__ == "__main__":
+    float_to_ieee754()

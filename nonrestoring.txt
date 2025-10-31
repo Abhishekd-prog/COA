@@ -1,0 +1,44 @@
+def non_restoring_division(dividend, divisor):
+    n = max(dividend.bit_length(), divisor.bit_length())
+    A = 0
+    Q = dividend
+    M = divisor
+
+    for _ in range(n):
+        # Left shift A and Q
+        A = ((A << 1) | ((Q >> (n - 1)) & 1))
+        Q = (Q << 1) & ((1 << n) - 1)
+
+        # Perform subtraction or addition based on sign of A
+        if A >= 0:
+            A = A - M
+        else:
+            A = A + M
+
+        # Set Q₀ based on new A
+        if A >= 0:
+            Q = Q | 1
+        else:
+            Q = Q & (~1)
+
+    # Final correction step
+    if A < 0:
+        A = A + M
+
+    # Mask A and Q to n bits
+    A &= (1 << n) - 1
+    Q &= (1 << n) - 1
+
+    return Q, A, n
+
+
+# --- Main Program ---
+divisor = int(input("Enter the Divisor (M) = "))
+dividend = int(input("Enter the Dividend (Q) = "))
+
+quotient, remainder, n = non_restoring_division(dividend, divisor)
+
+print(f"\nBinary representation of Dividend (Q) = {bin(dividend)[2:].zfill(n)}")
+print(f"Binary representation of Divisor (M) = {bin(divisor)[2:].zfill(n)}")
+print(f"Quotient in binary = {bin(quotient)[2:].zfill(n)}")
+print(f"Remainder in binary = {bin(remainder)[2:].zfill(n)}")

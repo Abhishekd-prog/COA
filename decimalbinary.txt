@@ -1,0 +1,35 @@
+def convert_integer_part(n, base):
+    digits = ''
+    symbols = '0123456789ABCDEF'
+    while n > 0:
+        digits = symbols[n % base] + digits
+        n //= base
+    return digits if digits != '' else '0'
+
+
+def convert_fractional_part(fraction, base, precision=6):
+    result = ''
+    symbols = '0123456789ABCDEF'
+    count = 0
+    while fraction > 0 and count < precision:
+        fraction *= base
+        digit = int(fraction)
+        result += symbols[digit]
+        fraction -= digit
+        count += 1
+    return result if result != '' else '0'
+
+
+# --- Main Program ---
+decimal_number = float(input("Enter the Input decimal number = "))
+base = int(input("Enter the base of the destination number system = "))
+
+integer_part = int(decimal_number)
+fraction_part = decimal_number - integer_part
+
+converted_integer = convert_integer_part(integer_part, base)
+converted_fraction = convert_fractional_part(fraction_part, base)
+
+print(f"Decimal {integer_part} converted into Base-{base} system = {converted_integer}")
+print(f"Fractional decimal {round(fraction_part, 2)} converted into Base-{base} system = 0.{converted_fraction}")
+print(f"Hence, Base-{base} equivalent of input decimal = {converted_integer}.{converted_fraction}")

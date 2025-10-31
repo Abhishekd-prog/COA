@@ -1,0 +1,55 @@
+# Get the level of memory hierarchy
+level = int(input("Enter level of memory hierarchy (2<=LEVEL<=3) :"))
+
+if level == 2:
+    print("Enter cost/bit :")
+    c1 = float(input("C1 = "))
+    c2 = float(input("C2 = "))
+    s1 = int(input("Enter size(bits) S1 = "))
+    s2 = int(input("Enter size(bits) S2 = "))
+    
+    print("Enter hit ratios :")
+    h1 = float(input("H1 = "))
+    h2 = float(input("H2 = "))
+    
+    print("Enter access time (microseconds) :")
+    t1 = int(input("Ta1 = "))
+    t2 = int(input("Ta2 = "))
+    
+    # Calculate average cost per bit
+    avg_cost = ((c1 * s1) + (c2 * s2)) / (s1 + s2)
+    print(f"Average cost/bit (INR) = {avg_cost}")
+    
+    # Calculate average access time
+    avg_time = h1 * t1 + (1 - h1) * h2 * t2
+    print(f"Average access time = {avg_time} microseconds")
+    
+elif level == 3:
+    print("Enter cost/bit :")
+    c1 = float(input("C1 = "))
+    c2 = float(input("C2 = "))
+    c3 = float(input("C3 = "))
+    s1 = int(input("Enter size(bits) S1 = "))
+    s2 = int(input("Enter size(bits) S2 = "))
+    s3 = int(input("Enter size(bits) S3 = "))
+    
+    print("Enter hit ratios :")
+    h1 = float(input("H1 = "))
+    h2 = float(input("H2 = "))
+    h3 = float(input("H3 = "))
+    
+    print("Enter access time (microseconds) :")
+    t1 = int(input("Ta1 = "))
+    t2 = int(input("Ta2 = "))
+    t3 = int(input("Ta3 = "))
+    
+    # Calculate average cost per bit
+    avg_cost = ((c1 * s1) + (c2 * s2) + (c3 * s3)) / (s1 + s2 + s3)
+    print(f"Average cost/bit (INR) = {avg_cost}")
+    
+    # Calculate average access time
+    avg_time = h1 * t1 + (1 - h1) * h2 * t2 + (1 - h1) * (1 - h2) * h3 * t3
+    print(f"Average access time = {avg_time} microseconds")
+    
+else:
+    print("Invalid input. LEVEL must be either 2 or 3.")
