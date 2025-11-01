@@ -1,0 +1,92 @@
+import math
+
+def is_power_of_two(n):
+    return (n & (n - 1) == 0) and n != 0
+
+def cache_mapping():
+    # Input data
+    cache_size_kb = int(input("Enter size of Cache memory (in KB): "))
+    main_size_mb = int(input("Enter size of Main memory (in MB): "))
+    line_size = int(input("Enter size of each cache line (in Bytes): "))
+
+    # Calculations
+    cache_size = cache_size_kb * 1024  # Cache size in bytes
+    main_size = main_size_mb * 1024 * 1024  # Main memory size in bytes
+    address_bits = int(math.log2(main_size))  # Number of address bits
+
+    cache_banks = 1  # Assuming a single cache bank
+    cache_bank_size = cache_size // cache_banks
+    cache_lines = cache_bank_size // line_size
+    main_blocks = main_size // line_size
+    byte_bits = int(math.log2(line_size))
+
+    # Mapping selection
+    print("\nSelect cache mapping policy:")
+    print("1: Direct Mapping")
+    print("2: Two-Way Set Associative Mapping")
+    print("3: Fully Associative Mapping")
+
+    mapping_choice = int(input("Enter your choice (1/2/3): "))
+
+    if mapping_choice == 1:
+        # Direct Mapping
+        line_bits = int(math.log2(cache_lines))
+        tag_bits = address_bits - (byte_bits + line_bits)
+
+        print("\nCache mapping policy: Direct Mapping")
+        print(f"Main Memory Address = {address_bits} bits")
+        print(f"Cache lines = {cache_lines} (Line No 0 to {cache_lines - 1})")
+        print(f"Main memory blocks = {main_blocks} (Block No 0 to {main_blocks - 1})")
+
+        block_num = int(input("\nEnter any Main memory block number for cache mapping: "))
+        cache_line = block_num % cache_lines
+        print(f"\nBlock {block_num} is mapped into cache line number = {cache_line}")
+
+    elif mapping_choice == 2:
+        # Two-Way Set Associative Mapping
+        sets = cache_lines // 2
+        set_bits = int(math.log2(sets))
+        tag_bits = address_bits - (byte_bits + set_bits)
+
+        print("\nCache mapping policy: Two-Way Set Associative Mapping")
+        print(f"Number of sets = {sets} (Set No 0 to {sets - 1})")
+        print(f"Lines per set = 2")
+
+        block_num = int(input("\nEnter any Main memory block number for cache mapping: "))
+        set_number = block_num % sets
+        print(f"\nBlock {block_num} is mapped into set number = {set_number}")
+        print("Block can be placed in either of the two lines in this set.")
+
+    elif mapping_choice == 3:
+        # Fully Associative Mapping
+        tag_bits = address_bits - byte_bits
+
+        print("\nCache mapping policy: Fully Associative Mapping")
+        print(f"Cache lines = {cache_lines} (Line No 0 to {cache_lines - 1})")
+        print(f"Main memory blocks = {main_blocks} (Block No 0 to {main_blocks - 1})")
+
+        block_num = int(input("\nEnter any Main memory block number for cache mapping: "))
+        cache_line = int(input(f"Enter cache line number (0 to {cache_lines - 1}): "))
+        print(f"\nBlock {block_num} is mapped into cache line number = {cache_line}")
+
+    else:
+        print("Invalid choice! Please select 1, 2, or 3.")
+        return  # Exit early if invalid choice
+
+    # Address interpretation
+    print("\nMain memory address of", address_bits, "bits is interpreted in 3 fields:")
+    print(f"LSB {byte_bits} bits → Byte selection")
+
+    if mapping_choice == 1:
+        print(f"Middle {line_bits} bits → Cache line selection")
+    elif mapping_choice == 2:
+        print(f"Middle {set_bits} bits → Set selection")
+    else:
+        print(f"Middle 0 bits → Cache line selection (Fully associative)")
+
+    print(f"MSB {tag_bits} bits → Tag bits")
+
+
+if __name__ == "__main__":
+    cache_mapping()
+
