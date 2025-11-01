@@ -1,0 +1,47 @@
+# Input for Multiplier (M) and Multiplicand (Q)
+M = int(input("Enter the Multiplier (M) = "))
+Q = int(input("Enter the Multiplicand (Q) = "))
+
+# Number of bits required to represent the numbers (based on the larger bit-length)
+n = max(M.bit_length(), Q.bit_length()) + 1
+
+# Function to get the binary representation of a number with a fixed number of bits
+def get_bin(num, bits):
+    if num >= 0:
+        return format(num, '0{}b'.format(bits))  # For non-negative numbers
+    else:
+        return format((1 << bits) + num, '0{}b'.format(bits))  # For negative numbers (2's complement)
+
+# Convert M and Q to binary representation
+M_bin = get_bin(M, n)
+Q_bin = get_bin(Q, n)
+
+# Initialize accumulator (acc) and partial product (P)
+acc = 0
+P = Q
+Q_1 = 0
+
+# Perform the multiplication algorithm (using Booth's algorithm or similar)
+for i in range(n):
+    Q0 = P & 1  # Get the least significant bit of P
+    
+    # Apply the rules for Booth's multiplication algorithm
+    if Q0 == 1 and Q_1 == 0:
+        acc = acc - M
+    elif Q0 == 0 and Q_1 == 1:
+        acc = acc + M
+    
+    # Combine acc and P, then shift right
+    val = ((acc << n) | (P & ((1 << n) - 1))) >> 1
+    acc = val >> n  # Extract the new value of acc (the upper half)
+    P = val & ((1 << n) - 1)  # Extract the new value of P (the lower half)
+    Q_1 = Q0  # Update Q_1 to the current least significant bit of P
+
+# Combine the final values of acc and P to get the product
+product_bin = get_bin((acc << n) | P, 2 * n)
+
+# Print the results
+print("Binary representation of Multiplicand (Q) =", Q_bin)
+print("Binary representation of Multiplier (M) =", M_bin)
+print("Result of multiplication in binary =", product_bin)
+
